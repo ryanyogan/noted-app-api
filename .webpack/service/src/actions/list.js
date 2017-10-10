@@ -95,31 +95,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var params, result;
+    var params, results;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             params = {
               TableName: 'notes',
-              Key: {
-                userId: event.requestContext.identity.cognitoIdentityId,
-                noteId: event.pathParameters.id
+              KeyConditionExpression: 'userId = :userId',
+              ExpressionAttributeValues: {
+                ':userId': event.requestContext.identity.cognitoIdentityId
               }
             };
             _context.prev = 1;
             _context.next = 4;
-            return dynamoDB.call('get', params);
+            return dynamoDB.call('query', params);
 
           case 4:
-            result = _context.sent;
+            results = _context.sent;
 
-
-            if (result.Item) {
-              callback(null, (0, _responseLib.success)(result.Item));
-            } else {
-              callback(null, (0, _responseLib.failure)({ status: false, error: 'Item Not Found' }));
-            }
+            callback(null, (0, _responseLib.success)(results.Items));
             _context.next = 11;
             break;
 
