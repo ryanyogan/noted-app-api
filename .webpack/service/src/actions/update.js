@@ -95,41 +95,49 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var params, results;
+    var data, params, result;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            data = JSON.parse(event.body);
             params = {
               TableName: 'notes',
-              KeyConditionExpression: 'userId = :userId',
+              Key: {
+                userId: event.requestContext.identity.cognitoIdentityId,
+                noteId: event.pathParameters.id
+              },
+              UpdateExpression: 'SET content = :content, attachment = :attachment',
               ExpressionAttributeValues: {
-                ':userId': event.requestContext.identity.cognitoIdentityId
-              }
+                ':attachment': data.attachment ? data.attachment : null,
+                ':content': data.content ? data.content : null
+              },
+              ReturnValues: 'ALL_NEW'
             };
-            _context.prev = 1;
-            _context.next = 4;
-            return dynamoDB.call('query', params);
+            _context.prev = 2;
+            _context.next = 5;
+            return dynamoDB.call('update', params);
 
-          case 4:
-            results = _context.sent;
+          case 5:
+            result = _context.sent;
 
-            callback(null, (0, _responseLib.success)(results.Items));
-            _context.next = 11;
+
+            callback(null, (0, _responseLib.success)({ status: true }));
+            _context.next = 12;
             break;
 
-          case 8:
-            _context.prev = 8;
-            _context.t0 = _context['catch'](1);
+          case 9:
+            _context.prev = 9;
+            _context.t0 = _context['catch'](2);
 
             callback(null, (0, _responseLib.failure)({ status: false }));
 
-          case 11:
+          case 12:
           case 'end':
             return _context.stop();
         }
       }
-    }, _callee, undefined, [[1, 8]]);
+    }, _callee, undefined, [[2, 9]]);
   }));
 
   return function main(_x, _x2, _x3) {
